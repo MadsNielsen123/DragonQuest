@@ -9,6 +9,8 @@ class Terminal
 public:
     Terminal();
 
+    void setTerminalSize(unsigned int width, unsigned int height);
+    void printStartScreen();
     void print(const std::string &text);
     void println(const std::string &text);
 
@@ -20,9 +22,6 @@ public:
     void resetStyle();
 
 private:
-
-    std::string red = "";
-    std::string line = "\033[4m";
 
     TextColor mTextColor;
     BackgroundColor mBackgroundColor;

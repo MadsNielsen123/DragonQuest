@@ -8,10 +8,13 @@ int main(int argc, char *argv[])
 {
     Terminal t;
 
-    t.setTextColor().red();
-    t.setBackgroundColor().green();
-    std::cout << "hej" << std::endl;
-    t.resetStyle();
+    t.setTerminalSize(100,30);
+    t.printStartScreen();
+
+    std::cin.ignore();
+    t.clear();
+    std::cin.ignore();
+
     return 0;
 }
 

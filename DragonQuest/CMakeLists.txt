@@ -23,4 +23,3 @@ add_executable(DragonQuest
 )
 target_link_libraries(DragonQuest Qt${QT_VERSION_MAJOR}::Core)
 target_link_libraries(DragonQuest Qt5::Core Qt5::Quick Qt5::Sql)
-
