@@ -7,12 +7,14 @@
 int main(int argc, char *argv[])
 {
     Terminal t;
+    t.hideCursor();
 
     t.setTerminalSize(100,30);
     t.printStartScreen();
 
     std::cin.ignore();
     t.clear();
+    t.showCursor();
     std::cin.ignore();
 
     return 0;

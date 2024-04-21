@@ -1,0 +1,17 @@
+#ifndef FORMAT_H
+#define FORMAT_H
+
+
+class Format
+{
+public:
+    Format();
+    void bold();
+    void noBold();
+    void Underline();
+    void noUnderline();
+
+
+};
+
+#endif // FORMAT_H

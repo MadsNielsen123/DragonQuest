@@ -10,6 +10,11 @@ public:
     void red();
     void yellow();
     void green();
+    void cyan();
+    void black();
+    void magenta();
+    void white();
+    void blue();
 };
 
 #endif // BACKGROUNDCOLOR_H
