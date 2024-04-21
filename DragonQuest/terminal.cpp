@@ -69,12 +69,9 @@ void Terminal::printStartScreen()
         println("╚═════╝ ╚═╝  ╚═╝╚═╝  ╚═╝ ╚═════╝  ╚═════╝ ╚═╝  ╚═══╝  ╚═▀▀═╝  ╚═════╝ ╚══════╝╚══════╝   ╚═╝");
         usleep(2000);
     }
-    println("");
     mTextColor.blue();
     println("							                           - BY MADS");
-    println("");
     resetStyle();
-
     println("");
     println("");
     print("█████████████████████████████████████ ");
