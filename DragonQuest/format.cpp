@@ -62,4 +62,12 @@ void Format::noStrikeThrough()
     std::cout << "\033[29m";
 }
 
+void Format::inverse()
+{
+    std::cout << "\033[7m";
+}
 
+void Format::noInverse()
+{
+    std::cout << "\033[27m";
+}

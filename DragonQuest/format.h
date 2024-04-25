@@ -18,6 +18,8 @@ public:
     void noDim();
     void strikeThrough();
     void noStrikeThrough();
+    void inverse();
+    void noInverse();
 };
 
 #endif // FORMAT_H

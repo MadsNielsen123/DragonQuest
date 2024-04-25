@@ -1,0 +1,4 @@
+/home/mads/DragonQuest/build-DragonQuest-Desktop-Debug/CMakeFiles/DragonQuest.dir
+/home/mads/DragonQuest/build-DragonQuest-Desktop-Debug/CMakeFiles/edit_cache.dir
+/home/mads/DragonQuest/build-DragonQuest-Desktop-Debug/CMakeFiles/rebuild_cache.dir
+/home/mads/DragonQuest/build-DragonQuest-Desktop-Debug/CMakeFiles/DragonQuest_autogen.dir
