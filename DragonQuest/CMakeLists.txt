@@ -11,9 +11,6 @@ set(CMAKE_AUTORCC ON)
 set(CMAKE_CXX_STANDARD 11)
 set(CMAKE_CXX_STANDARD_REQUIRED ON)
 
-# Find the ncurses package
-find_package(Curses REQUIRED)
-
 find_package(QT NAMES Qt6 Qt5 COMPONENTS Core REQUIRED)
 find_package(Qt${QT_VERSION_MAJOR} COMPONENTS Core REQUIRED)
 find_package(Qt5 REQUIRED COMPONENTS Core Quick Sql)
@@ -37,6 +34,3 @@ set_target_properties(Curses::Curses PROPERTIES
   INTERFACE_INCLUDE_DIRECTORIES "${CURSES_INCLUDE_DIRS}"
   INTERFACE_LINK_LIBRARIES "${CURSES_LIBRARIES}"
 )
-
-# Link the executable against the ncurses library
-target_link_libraries(DragonQuest PRIVATE Curses::Curses)
