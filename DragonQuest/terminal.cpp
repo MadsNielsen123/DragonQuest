@@ -46,13 +46,17 @@ void Terminal::clear()
     setCursor(0,0);
 }
 
-void Terminal::print(const std::string &text)
+void Terminal::print(const std::string &text, int x, int y)
 {
+    if(x >= 0 && y >= 0)
+        setCursor(x,y);
     std::cout << text;
 }
 
-void Terminal::println(const std::string &text)
+void Terminal::println(const std::string &text, int x, int y)
 {
+    if(x >= 0 && y >= 0)
+        setCursor(x,y);
     std::cout << text << std::endl;
 }
 
@@ -96,69 +100,82 @@ void Terminal::printStartScreen()
 
 }
 
-void Terminal::printHeroLogo()
+void Terminal::printHeroLogo(const std::string& name, unsigned int hp, unsigned int ap)
 {
-    unsigned int x = 50, y=0;
+    unsigned int x = 55, y=1;
+    mTextColor.cyan();
+    std::string shortName = name;
+    shortName.resize(10);
+    printBigText(shortName, x-5, y);
+
     mTextColor.RGB(200, 200, 200);
     mFormat.inverse();
-    setCursor(x, y+1);
-    println("████████████████                  █████████████████");
-    setCursor(x, y+2);
-    println("██████████████  ██████████████████  ███████████████");
-    setCursor(x, y+3);
-    println("█████████████ ██▒▒▒▒▒▒▒           ██   ████████████");
-    setCursor(x, y+4);
-    println("█████████████ ██▒▒▒▒▒▒▒▒▒▒          ██ ████████████");
     setCursor(x, y+5);
-    println("█████████████ ██▒▒▒▒▒▒▒▒▒▒          ██ ████████████");
+    println("████████████████                  █████████████████");
     setCursor(x, y+6);
-    println("█████████████ ██▒▒▒▒██████████████  ██ ████████████");
+    println("██████████████  ██████████████████  ███████████████");
     setCursor(x, y+7);
-    println("█████████████ ██▒▒▒▒██████████████  ██ ████████████");
+    println("█████████████ ██▒▒▒▒▒▒▒           ██   ████████████");
     setCursor(x, y+8);
-    println("█████████████ ██▒▒▒▒▒▒▒▒░░████▒▒░░  ██ ████████████");
+    println("█████████████ ██▒▒▒▒▒▒▒▒▒▒          ██ ████████████");
     setCursor(x, y+9);
-    println("█████████████ ██▒▒▒▒▒▒    ████      ██ ████████████");
+    println("█████████████ ██▒▒▒▒▒▒▒▒▒▒          ██ ████████████");
     setCursor(x, y+10);
-    println("████          ██░░░░▒▒    ████      ██     ████████");
+    println("█████████████ ██▒▒▒▒██████████████  ██ ████████████");
     setCursor(x, y+11);
-    println("███  ███████████    ▒▒    ████      ██████   ██████");
+    println("█████████████ ██▒▒▒▒██████████████  ██ ████████████");
     setCursor(x, y+12);
-    println("███ ██  ▒▒    ▒▒██████████████████████▒▒▒▒██ ██████");
+    println("█████████████ ██▒▒▒▒▒▒▒▒░░████▒▒░░  ██ ████████████");
     setCursor(x, y+13);
-    println("███ ██  ▒▒    ▒▒██▒▒▒▒████████████████▒▒  ██ ██████");
+    println("█████████████ ██▒▒▒▒▒▒    ████      ██ ████████████");
     setCursor(x, y+14);
-    println("███ ████  ▒▒▒▒██    ██    ░░░░▒▒▒▒████████   ██████");
+    println("████          ██░░░░▒▒    ████      ██     ████████");
     setCursor(x, y+15);
-    println("█ ████░░████████    ██    ░░░░▒▒▒▒████     ████████");
+    println("███  ███████████    ▒▒    ████      ██████   ██████");
     setCursor(x, y+16);
-    println("█ █████████░██████▒▒▒▒██    ░░▒▒████████        ███");
+    println("███ ██  ▒▒    ▒▒██████████████████████▒▒▒▒██ ██████");
     setCursor(x, y+17);
-    println("█ ██  █████░███████████████████████████████████    ");
+    println("███ ██  ▒▒    ▒▒██▒▒▒▒████████████████▒▒  ██ ██████");
     setCursor(x, y+18);
-    println("██ ██░░██▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒█████");
+    println("███ ████  ▒▒▒▒██    ██    ░░░░▒▒▒▒████████   ██████");
     setCursor(x, y+19);
-    println("███ ███░░██░███████████████████████████████████    ");
+    println("█ ████░░████████    ██    ░░░░▒▒▒▒████     ████████");
     setCursor(x, y+20);
-    println("█████ ██░░█░██████▒▒▒▒██▒▒▒▒▒▒██▒▒████          ███");
+    println("█ █████████░██████▒▒▒▒██    ░░▒▒████████        ███");
     setCursor(x, y+21);
-    println("███████ █████ ██░░░░████  ░░████  ░░██ ████████████");
+    println("█ ██  █████░███████████████████████████████████    ");
     setCursor(x, y+22);
-    println("███████████ ██████████      ██████████ ████████████");
+    println("██ ██░░██▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒█████");
     setCursor(x, y+23);
-    println("███████████ ████░░██ ████████ ████  ██ ████████████");
+    println("███ ███░░██░███████████████████████████████████    ");
     setCursor(x, y+24);
-    println("███████████ ██████ ████████████ ██████ ████████████");
+    println("█████ ██░░█░██████▒▒▒▒██▒▒▒▒▒▒██▒▒████          ███");
     setCursor(x, y+25);
-    println("██████████ ██████ ████████████████ ████ ███████████");
+    println("███████ █████ ██░░░░████  ░░████  ░░██ ████████████");
     setCursor(x, y+26);
+    println("███████████ ██████████      ██████████ ████████████");
+    setCursor(x, y+27);
+    println("███████████ ████░░██ ████████ ████  ██ ████████████");
+    setCursor(x, y+28);
+    println("███████████ ██████ ████████████ ██████ ████████████");
+    setCursor(x, y+29);
+    println("██████████ ██████ ████████████████ ████ ███████████");
+    setCursor(x, y+30);
     println("█████████ ██▒▒▒▒ ████████████████ ██▒▒▒▒ ██████████");
     resetStyle();
-
+    setCursor(x, y+32);
+    std::string stats = "           [Health: " + std::to_string(hp) + "]    ";
+    mTextColor.red();
+    print(stats);
+    mTextColor.yellow();
+    stats = "[Attack: " + std::to_string(ap) + "]";
+    println(stats);
+    resetStyle();
 }
 
-void Terminal::printList(const std::vector<std::string> &items, int printAmount, bool withArrow, unsigned int arrowIndex)
+void Terminal::printList(const std::vector<std::string> &items, bool withIndex, unsigned int printX, unsigned int printY, int printAmount, bool withArrow, unsigned int arrowIndex)
 {
+
     if(printAmount < 0)
         printAmount = items.size();
 
@@ -177,11 +194,14 @@ void Terminal::printList(const std::vector<std::string> &items, int printAmount,
 
     for( ; i<items.size(); ++i)
     {
-        if(withArrow && i == arrowIndex)
-            std::cout << "-> ";
+        setCursor(printX, printY+printCount);
+        if(withIndex)
+            std::cout << i+1 << ". ";
         std::cout << items[i];
+        if(withArrow && i == arrowIndex)
+            std::cout << " <-";
         std::cout << std::endl;
-        printCount++;
+        ++printCount;
             if(printCount == printAmount)
                 break;
     }
@@ -189,7 +209,7 @@ void Terminal::printList(const std::vector<std::string> &items, int printAmount,
 
 void Terminal::setCursor(unsigned int x, unsigned int y)
 {
-    std::string command = "\033["+std::to_string(y)+";"+std::to_string(x)+"H";
+    std::string command = "\033["+std::to_string(++y)+";"+std::to_string(++x)+"H";
     std::cout << command;
 }
 
@@ -202,3 +222,89 @@ void Terminal::showCursor()
 {
     std::cout << "\e[?25h";
 }
+
+void Terminal::printHeroNames(const std::vector<Hero> &heroes, bool withLevels, bool withIndex, unsigned int printX, unsigned int printY, int printAmount, bool withArrow, unsigned int arrowIndex)
+{
+    std::vector<std::string> heroNames;
+    std::string temp;
+    for(const Hero& hero: heroes)
+    {
+        temp = hero.getName();
+        if(withLevels)
+            temp += " (Level "+std::to_string(hero.getLevel())+ ")";
+        heroNames.push_back(temp);
+    }
+
+    printList(heroNames, withIndex, printX, printY, printAmount, withArrow, arrowIndex);
+}
+
+void Terminal::printBigText(const std::string &text, unsigned int x, unsigned int y)
+{
+    for(int i=0; i<4; ++i)
+    {
+        setCursor(x, y+i);
+        for(int c = 0; c<text.length(); c++)
+        {
+            if(text.at(c) == 'a' || text.at(c) == 'A')
+                print(mBT.A[i]);
+            else if(text.at(c) == 'b' || text.at(c) == 'B')
+                print(mBT.B[i]);
+            else if(text.at(c) == 'c' || text.at(c) == 'C')
+                print(mBT.C[i]);
+            else if(text.at(c) == 'd' || text.at(c) == 'D')
+                print(mBT.D[i]);
+            else if(text.at(c) == 'e' || text.at(c) == 'E')
+                print(mBT.E[i]);
+            else if(text.at(c) == 'f' || text.at(c) == 'F')
+                print(mBT.F[i]);
+            else if(text.at(c) == 'g' || text.at(c) == 'G')
+                print(mBT.G[i]);
+            else if(text.at(c) == 'h' || text.at(c) == 'H')
+                print(mBT.H[i]);
+            else if(text.at(c) == 'i' || text.at(c) == 'I')
+                print(mBT.I[i]);
+            else if(text.at(c) == 'j' || text.at(c) == 'J')
+                print(mBT.J[i]);
+            else if(text.at(c) == 'k' || text.at(c) == 'K')
+                print(mBT.K[i]);
+            else if(text.at(c) == 'l' || text.at(c) == 'L')
+                print(mBT.L[i]);
+            else if(text.at(c) == 'm' || text.at(c) == 'M')
+                print(mBT.M[i]);
+            else if(text.at(c) == 'n' || text.at(c) == 'N')
+                print(mBT.N[i]);
+            else if(text.at(c) == 'o' || text.at(c) == 'O')
+                print(mBT.O[i]);
+            else if(text.at(c) == 'p' || text.at(c) == 'P')
+                print(mBT.P[i]);
+            else if(text.at(c) == 'q' || text.at(c) == 'Q')
+                print(mBT.Q[i]);
+            else if(text.at(c) == 'r' || text.at(c) == 'R')
+                print(mBT.R[i]);
+            else if(text.at(c) == 's' || text.at(c) == 'S')
+                print(mBT.S[i]);
+            else if(text.at(c) == 't' || text.at(c) == 'T')
+                print(mBT.T[i]);
+            else if(text.at(c) == 'u' || text.at(c) == 'U')
+                print(mBT.U[i]);
+            else if(text.at(c) == 'v' || text.at(c) == 'V')
+                print(mBT.V[i]);
+            else if(text.at(c) == 'w' || text.at(c) == 'W')
+                print(mBT.W[i]);
+            else if(text.at(c) == 'x' || text.at(c) == 'X')
+                print(mBT.X[i]);
+            else if(text.at(c) == 'y' || text.at(c) == 'Y')
+                print(mBT.Y[i]);
+            else if(text.at(c) == 'z' || text.at(c) == 'Z')
+                print(mBT.Z[i]);
+            else if(text.at(c) == '\x91' || text.at(c) == '\x92')
+                print(mBT.AE[i]);
+            else if(text.at(c) == '\x9B' || text.at(c) == '\x9D')
+                print(mBT.OE[i]);
+            else if(text.at(c) == '\x86' || text.at(c) == '\x8F')
+                print(mBT.AA[i]);
+
+        }
+    }
+}
+

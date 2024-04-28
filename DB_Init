@@ -1,0 +1,19 @@
+create schema dragon_quest;
+use dragon_quest;
+
+create table hero (
+	hero_id int auto_increment not null,
+    name char(20) not null,
+    level int not null,
+    xp int not null,
+    hp int not null,
+    ap int not null,
+    primary key(hero_id)
+);
+
+INSERT INTO hero (name, level, xp, hp, ap) VALUES 
+('Batman', 8, 800, 150, 40),
+('Wonder Woman', 12, 600, 250, 60),
+('Spider-Man', 7, 700, 120, 35);
+
+select * from hero;

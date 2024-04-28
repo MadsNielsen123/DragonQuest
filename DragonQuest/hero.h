@@ -6,9 +6,10 @@ class Hero : public Character
 {
 public:
     Hero();
-    void setXP();
-    void addXP();
+    void setXP(unsigned int xp);
     unsigned int getXP() const;
+
+    void addXP(unsigned int xp);
 
 private:
     unsigned int mXP;
