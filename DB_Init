@@ -11,9 +11,33 @@ create table hero (
     primary key(hero_id)
 );
 
+create table monster (
+	monster_id int auto_increment not null,
+    name char(20) not null,
+    level int not null,
+    hp int not null,
+    ap int not null,
+	kill_xp int not null,
+    primary key(monster_id)
+);
+
 INSERT INTO hero (name, level, xp, hp, ap) VALUES 
 ('Batman', 8, 800, 150, 40),
 ('Wonder Woman', 12, 600, 250, 60),
 ('Spider-Man', 7, 700, 120, 35);
 
+
+INSERT INTO monster (name, level, hp, ap, kill_xp) VALUES 
+('Rat', 1, 5, 1, 100),
+('Spider', 2, 10, 2, 150),
+('Zombie', 5, 30, 3, 300),
+('Skeleton', 5, 20, 4, 300),
+('Hound', 3, 16, 3, 200),
+('Dragon', 10, 10000, 200, 20000);
+
+
 select * from hero;
+
+select * from monster;
+
+select MAX(hero_id) from hero;

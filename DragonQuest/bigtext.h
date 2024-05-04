@@ -36,6 +36,7 @@ public:
     std::vector<std::string> AE = {"", "", "", ""};
     std::vector<std::string> OE = {"", "", "", ""};
     std::vector<std::string> AA = {"", "", "", ""};
+    std::vector<std::string> SPACE = {"", "", "", ""};
 };
 
 #endif // BIGTEXT_H

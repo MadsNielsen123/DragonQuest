@@ -6,6 +6,7 @@
 #include "format.h"
 #include <vector>
 #include "hero.h"
+#include "monster.h"
 #include "bigtext.h"
 
 class Terminal
@@ -19,6 +20,8 @@ public:
     void setCursor(unsigned int x, unsigned int y);
     void hideCursor();
     void showCursor();
+    void saveCursorPos();
+    void gotoSavedCursorPos();
     void clear();
 
     //Font
@@ -29,10 +32,13 @@ public:
 
     //Special Prints
     void printStartScreen();
-    void printHeroLogo(const std::string& name, unsigned int hp, unsigned int ap);
+    void printHeroLogo(const std::string& name = "", unsigned int hp = 0, unsigned int ap = 0);
     void printList(const std::vector<std::string> &items, bool withIndex = false, unsigned int printX = 0, unsigned int printY = 0 , int printAmount = -1, bool withArrow = false, unsigned int arrowIndex = 0);
     void printHeroNames(const std::vector<Hero> &heroes, bool withLevels = false, bool withIndex = false, unsigned int printX = 0, unsigned int printY = 0 , int printAmount = -1, bool withArrow = false, unsigned int arrowIndex = 0);
+    void printMonsterNames(const std::vector<Monster> &monsters, bool withLevels = false, unsigned int heroLevel = 0, bool withIndex = false, unsigned int printX = 0, unsigned int printY = 0);
     void printBigText(const std::string &text, unsigned int x, unsigned int y);
+    void printPageTitle(const std::string &title);
+    void printBattleBox(const Character& ch1, const Character& ch2, unsigned int x, unsigned int y);
 
 private:
 

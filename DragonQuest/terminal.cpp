@@ -50,7 +50,7 @@ void Terminal::print(const std::string &text, int x, int y)
 {
     if(x >= 0 && y >= 0)
         setCursor(x,y);
-    std::cout << text;
+    std::cout << text << std::flush;
 }
 
 void Terminal::println(const std::string &text, int x, int y)
@@ -102,11 +102,14 @@ void Terminal::printStartScreen()
 
 void Terminal::printHeroLogo(const std::string& name, unsigned int hp, unsigned int ap)
 {
-    unsigned int x = 55, y=1;
-    mTextColor.cyan();
-    std::string shortName = name;
-    shortName.resize(10);
-    printBigText(shortName, x-5, y);
+    unsigned int x = 55, y=2;
+    if(name != "")
+    {
+        mTextColor.cyan();
+        std::string shortName = name;
+        shortName.resize(10);
+        printBigText(shortName, x-5, y);
+    }
 
     mTextColor.RGB(200, 200, 200);
     mFormat.inverse();
@@ -163,14 +166,17 @@ void Terminal::printHeroLogo(const std::string& name, unsigned int hp, unsigned 
     setCursor(x, y+30);
     println("█████████ ██▒▒▒▒ ████████████████ ██▒▒▒▒ ██████████");
     resetStyle();
-    setCursor(x, y+32);
-    std::string stats = "           [Health: " + std::to_string(hp) + "]    ";
-    mTextColor.red();
-    print(stats);
-    mTextColor.yellow();
-    stats = "[Attack: " + std::to_string(ap) + "]";
-    println(stats);
-    resetStyle();
+    if(hp > 0 || ap > 0)
+    {
+        setCursor(x, y+32);
+        std::string stats = "           [Health: " + std::to_string(hp) + "]    ";
+        mTextColor.red();
+        print(stats);
+        mTextColor.RGB(255, 230, 0);
+        stats = "[Attack: " + std::to_string(ap) + "]";
+        println(stats);
+        resetStyle();
+    }
 }
 
 void Terminal::printList(const std::vector<std::string> &items, bool withIndex, unsigned int printX, unsigned int printY, int printAmount, bool withArrow, unsigned int arrowIndex)
@@ -223,6 +229,17 @@ void Terminal::showCursor()
     std::cout << "\e[?25h";
 }
 
+void Terminal::saveCursorPos()
+{
+    std::cout << "\e 7";
+}
+
+
+void Terminal::gotoSavedCursorPos()
+{
+    std::cout << "\e 8";
+}
+
 void Terminal::printHeroNames(const std::vector<Hero> &heroes, bool withLevels, bool withIndex, unsigned int printX, unsigned int printY, int printAmount, bool withArrow, unsigned int arrowIndex)
 {
     std::vector<std::string> heroNames;
@@ -236,6 +253,37 @@ void Terminal::printHeroNames(const std::vector<Hero> &heroes, bool withLevels, 
     }
 
     printList(heroNames, withIndex, printX, printY, printAmount, withArrow, arrowIndex);
+}
+
+void Terminal::printMonsterNames(const std::vector<Monster> &monsters, bool withLevels, unsigned int heroLevel, bool withIndex, unsigned int printX, unsigned int printY)
+{
+    for(int i = 0; i<monsters.size(); ++i)
+    {
+        setCursor(printX, printY+i);
+        mTextColor.white(); mFormat.bold();
+        if(withIndex)
+        {
+            print(std::to_string(i) + ". ");
+        }
+        print(monsters[i].getName());
+
+        if(withLevels)
+        {
+            resetStyle();
+            if(monsters[i].getLevel() < heroLevel)
+                mTextColor.RGB(100, 255, 0);
+            else if (monsters[i].getLevel() == heroLevel)
+                mTextColor.RGB(220, 255, 0);
+            else if (monsters[i].getLevel() <= heroLevel+2)
+                mTextColor.RGB(255, 200, 0);
+            else
+                mTextColor.red();
+
+            print(" - LVL " + std::to_string(monsters[i].getLevel()));
+        }
+        println("");
+        resetStyle();
+    }
 }
 
 void Terminal::printBigText(const std::string &text, unsigned int x, unsigned int y)
@@ -303,8 +351,27 @@ void Terminal::printBigText(const std::string &text, unsigned int x, unsigned in
                 print(mBT.OE[i]);
             else if(text.at(c) == '\x86' || text.at(c) == '\x8F')
                 print(mBT.AA[i]);
+            else if(text.at(c) == ' ')
+                print(mBT.SPACE[i]);
 
         }
     }
 }
 
+void Terminal::printPageTitle(const std::string &title)
+{
+    setCursor(0,0);
+    std::cout << std::setw(mTerminalSizeX) << std::setfill('_') << "" << std::endl;
+    mTextColor.cyan();
+    mFormat.bold();
+    printBigText(title, 1, 1);
+    resetStyle();
+    println("");
+    std::cout << std::setw(mTerminalSizeX) << std::setfill('_') << "" << std::endl;
+}
+
+void Terminal::printBattleBox(const Character &ch1, const Character &ch2, unsigned int x, unsigned int y)
+{
+    setCursor(x, y);
+    std::cout << std::setw(60) << std::setfill('_') << "" << std::endl;
+}

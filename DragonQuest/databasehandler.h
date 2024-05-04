@@ -8,6 +8,7 @@
 #include <string>
 #include <vector>
 #include <hero.h>
+#include <monster.h>
 
 class DatabaseHandler
 {
@@ -16,6 +17,10 @@ public:
     ~DatabaseHandler();
 
     std::vector<Hero> getHeroes();
+    unsigned int addHero(const Hero& hero);
+    void saveHero(const Hero& hero);
+
+    std::vector<Monster> getMonsters();
 
 private:
     QSqlDatabase mDB;

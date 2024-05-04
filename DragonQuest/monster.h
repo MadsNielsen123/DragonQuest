@@ -1,11 +1,17 @@
 #ifndef MONSTER_H
 #define MONSTER_H
+#include "character.h"
 
-
-class Monster
+class Monster : public Character
 {
 public:
     Monster();
+
+    void setKillXP(unsigned int xp);
+    unsigned int getKillXP() const;
+
+private:
+    unsigned int mKillXP;
 };
 
 #endif // MONSTER_H
