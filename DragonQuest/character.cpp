@@ -22,5 +22,7 @@ void Character::setID(unsigned int id){mID = id;}
 
 void Character::heal(unsigned int procent)
 {
-    mHealth = mHP*(procent/100);
+    mHealth += mHP*(procent/100);
+    if(mHealth > mHP)
+        mHealth = mHP;
 }

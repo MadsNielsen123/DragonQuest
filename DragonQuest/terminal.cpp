@@ -263,7 +263,7 @@ void Terminal::printMonsterNames(const std::vector<Monster> &monsters, bool with
         mTextColor.white(); mFormat.bold();
         if(withIndex)
         {
-            print(std::to_string(i) + ". ");
+            print(std::to_string(i+1) + ". ");
         }
         print(monsters[i].getName());
 
@@ -372,6 +372,114 @@ void Terminal::printPageTitle(const std::string &title)
 
 void Terminal::printBattleBox(const Character &ch1, const Character &ch2, unsigned int x, unsigned int y)
 {
-    setCursor(x, y);
-    std::cout << std::setw(60) << std::setfill('_') << "" << std::endl;
+
+    //BOX
+    setCursor(x+1, y);
+    std::cout << std::setw(80) << std::setfill('_') << "" << std::flush;
+    for(int i = 1; i<9; ++i)
+    {
+        setCursor(x, y+i); std::cout << "|" << std::flush;
+        if(i>1)
+        {
+            setCursor(x+41, y+i); std::cout << "|" << std::flush;
+        }
+        setCursor(x+81, y+i); std::cout << "|" << std::flush;
+    }
+    setCursor(x+1, y+8);
+    std::cout << std::setw(80) << std::setfill('_') << "" << std::flush;
+
+    //Characters Names
+    mFormat.underline();
+    setCursor(x+3, y+2);
+    print(ch1.getName());
+    setCursor(x+3+41, y+2);
+    print(ch2.getName());
+    resetStyle();
+
+    //Character Levels
+    mFormat.bold();
+    setCursor(x+30, y+2);
+    print("Level " + std::to_string(ch1.getLevel()));
+    setCursor(x+30+41, y+2);
+    print("Level " + std::to_string(ch2.getLevel()));
+    resetStyle();
+
+    //Stats
+    resetStyle();    setCursor(x+3, 5);
+    print(std::to_string(ch1.getAP()));
+    mTextColor.yellow();
+    print(" AP");
+
+    resetStyle();
+    setCursor(x+3+41, 5);
+    print(std::to_string(ch2.getAP()));
+    mTextColor.yellow();
+    print(" AP");
+    resetStyle();
+
+    unsigned int g, r;
+    //Character1 HP-Bar
+    setCursor(x+3, 7);
+    print(std::to_string(ch1.getHealth()) + "/" + std::to_string(ch1.getHP()));
+    mTextColor.red();
+    print(" HP");
+    resetStyle();
+
+    if(ch1.getHealth() > ch1.getHP()/100.*50) //over 50% health
+    {
+        g = 255;
+        r = 255-(255/100*(100./(ch1.getHP()/2.)*(ch1.getHealth()-ch1.getHP()/2.)));
+    }
+    else
+    {
+        r = 255;
+        g = 255/50*(100./ch1.getHP()*ch1.getHealth());
+    }
+
+    setCursor(x+3, 8);
+    print("|");
+    mTextColor.RGB(r, g, 0);
+    for(int i = 0; i<30; ++i)
+    {
+        if(ch1.getHealth() > ch1.getHP()/100.*(100./30*i))
+            print("█");
+        else
+            print("_");
+    }
+    resetStyle();
+    print("|");
+
+    //Character2 HP-Bar
+    setCursor(x+3+41, 7);
+    print(std::to_string(ch2.getHealth()) + "/" + std::to_string(ch2.getHP()));
+    mTextColor.red();
+    print(" HP");
+    resetStyle();
+
+    if(ch2.getHealth() > ch2.getHP()/100.*50) //over 50% health
+    {
+        g = 255;
+        r = 255-(255/100*(100./(ch2.getHP()/2.)*(ch2.getHealth()-ch2.getHP()/2.)));
+    }
+    else
+    {
+        r = 255;
+        g = 255/50*(100./ch2.getHP()*ch2.getHealth());
+    }
+
+    setCursor(x+3+41, 8);
+    print("|");
+    mTextColor.RGB(r, g, 0);
+    for(int i = 0; i<30; ++i)
+    {
+        if(ch2.getHealth() > ch2.getHP()/100.*(100./30*i))
+            print("█");
+        else
+            print("_");
+    }
+    resetStyle();
+    print("|");
+
+
+    resetStyle();
 }

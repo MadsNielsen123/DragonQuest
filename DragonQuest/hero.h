@@ -10,6 +10,7 @@ public:
     unsigned int getXP() const;
 
     void addXP(unsigned int xp);
+    void levelUp();
 
 private:
     unsigned int mXP;

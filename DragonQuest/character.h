@@ -25,7 +25,7 @@ public:
     virtual void heal(unsigned int procent = 100);
 
 protected:
-    unsigned int mHP = 10, mAP = 2, mLevel = 1, mHealth, mID;
+    unsigned int mHP = 10, mAP = 2, mLevel = 1, mHealth = 0, mID = 0;
     std::string mName = "";
 };
 

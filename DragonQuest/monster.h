@@ -11,7 +11,7 @@ public:
     unsigned int getKillXP() const;
 
 private:
-    unsigned int mKillXP;
+    unsigned int mKillXP = 0;
 };
 
 #endif // MONSTER_H

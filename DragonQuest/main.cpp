@@ -8,6 +8,7 @@
 #include "character.h"
 #include "hero.h"
 #include "monster.h"
+#include "battle.h"
 
 int main()
 {
@@ -113,10 +114,12 @@ int main()
             MENU,
             HERO_INFO,
             MONSTER_PICK,
+            MONSTER_BATTLE,
             GAME_OVER
     };
 
     GameState currentState = GameState::MENU;
+    unsigned int monsterPicked = 0;
 
     while(currentState != GameState::GAME_OVER)
     {
@@ -194,28 +197,66 @@ int main()
                 break;
 
             case GameState::MONSTER_PICK:
-                //Print info
-                t.clear();
-                t.printPageTitle("Pick A Battle");
 
-                t.setTextColor().RGB(255, 0, 0);
-                t.println("[X] Exit", 5, 8);
-                t.resetStyle();
-
-                monsters = DH.getMonsters(); //Load monsters
-                t.printMonsterNames(monsters, true, hero.getLevel(), true, 5, 10);
-                t.println("");
-                t.print("     Select option: ");
-                std::getline(std::cin, input);
-
-                if(input == "x" || input == "X")
+                while(currentState == GameState::MONSTER_PICK)
                 {
-                    currentState = GameState::MENU;
-                    break;
+                    //Print info
+                        t.clear();
+                        t.printPageTitle("Pick A Battle");
+
+                        t.setTextColor().RGB(255, 0, 0);
+                        t.println("[X] Return to Menu", 5, 8);
+                        t.resetStyle();
+
+                        monsters = DH.getMonsters(); //Load monsters
+                        t.printMonsterNames(monsters, true, hero.getLevel(), true, 5, 10);
+                        t.println("");
+                        t.print("     Select option: ");
+                        std::getline(std::cin, input);
+
+                        try
+                        {
+                           monsterPicked = stoi(input);
+                        }
+                        catch(std::exception e)
+                        {
+                            monsterPicked = 0;
+
+                            if (input == "x" || input == "X")
+                            currentState = GameState::MENU;
+                        }
+
+                        if(monsterPicked > monsters.size())
+                            monsterPicked = 0;
+
+                        if(monsterPicked > 0)
+                            currentState = GameState::MONSTER_BATTLE;
                 }
 
                 break;
 
+                case GameState::MONSTER_BATTLE:
+                    {
+                        t.clear();
+                        t.hideCursor();
+                        Battle battle(hero, monsters[monsterPicked-1]);
+                        battle.start();
+
+                        hero.heal();
+                        monsters[monsterPicked-1].heal();
+
+
+                        DH.saveHero(hero);
+                        t.setFormat().blink();
+                        t.print("Press Enter to continue ...", 5, 32);
+
+                        std::cin.ignore();
+                        t.resetStyle();
+                        t.showCursor();
+                        currentState = GameState::MONSTER_PICK;
+                    }
+
+                break;
             default:
                 //do nothing
                 break;
