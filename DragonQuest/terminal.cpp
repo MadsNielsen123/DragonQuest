@@ -402,6 +402,8 @@ void Terminal::printBigText(const std::string &text, unsigned int x, unsigned in
                 print(mBT.SPACE[i]);
             else if(text.at(c) == '.')
                 print(mBT.DOT[i]);
+            else if(text.at(c) == '!')
+                print(mBT.EXC[i]);
 
         }
     }
@@ -544,7 +546,7 @@ void Terminal::printCaveEntry(const Cave &cave)
         usleep(5000);
     }
 
-    usleep(2000000);
+    usleep(500000);
 
     for(int i = 220; i>0; --i)
     {
@@ -559,23 +561,48 @@ void Terminal::printCaveEntry(const Cave &cave)
     for(int i = 0; i<250; ++i)
     {
         mTextColor.RGB(i, 0, 0);
-        printBigText(cave.getName(), 10, 10);
+        printBigText(cave.getName(), 50-2.5*cave.getName().length(), 10);
         usleep(5000);
     }
 
     mTextColor.RGB(0, 0, 0);
-    usleep(3000000);
+    usleep(2000000);
 
     for(int i = 250; i>0; --i)
     {
         mTextColor.RGB(i, 0, 0);
-        printBigText(cave.getName(), 10, 10);
+        printBigText(cave.getName(), 50-2.5*cave.getName().length(), 10);
         usleep(2000);
     }
     showCursor();
 }
 
-void Terminal::printCaveReward(const Hero &hero, unsigned int gold, unsigned int xp)
+void Terminal::printCaveReward(const Hero &hero, const Cave& cave)
 {
+    for(int i = 0; i<220; ++i)
+    {
+        mTextColor.RGB(i, i/2, 0);
+        printBigText(cave.getName(), 50-2.5*cave.getName().length(), 5);
+        usleep(5000);
+    }
 
+    for(int i = 0; i<220; ++i)
+    {
+        mTextColor.RGB(0, i, 0);
+        printBigText("conquered!", 30, 9);
+        usleep(1000);
+    }
+
+    resetStyle();
+    print(hero.getName() + " receives: ", 5, 15);
+
+    print(std::to_string(cave.getWinGold()), 5, 17);
+    mTextColor.RGB(255, 220, 0);
+    print(" GOLD");
+    resetStyle();
+
+    print(std::to_string(cave.getWinXP()), 5, 18);
+    mTextColor.yellow();
+    print(" Bonus XP");
+    resetStyle();
 }

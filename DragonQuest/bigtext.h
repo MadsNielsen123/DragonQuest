@@ -37,7 +37,8 @@ public:
     std::vector<std::string> OE = {"", "", "", ""};
     std::vector<std::string> AA = {"", "", "", ""};
     std::vector<std::string> SPACE = {"", "", "", ""};
-    std::vector<std::string> DOT = {"", "", "", " O "};
+    std::vector<std::string> DOT = {"  ", "  ", "  ", "O "};
+    std::vector<std::string> EXC = {"", "", "", ""};
 };
 
 #endif // BIGTEXT_H

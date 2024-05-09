@@ -15,3 +15,8 @@ void Hero::levelUp()
     setAP(mAP+1);
     setHP(mHP+2);
 }
+
+void Hero::setGold(int gold){mGold = gold;}
+void Hero::giveGold(int gold){mGold = mGold + gold;}
+void Hero::takeGold(int gold){mGold = mGold - gold;}
+int Hero::getGold() const {return mGold;}

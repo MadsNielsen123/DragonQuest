@@ -42,7 +42,7 @@ public:
     void printPageTitle(const std::string &title);
     void printBattleBox(const Character& ch1, const Character& ch2, unsigned int x, unsigned int y);
     void printCaveEntry(const Cave& cave);
-    void printCaveReward(const Hero& hero, unsigned int gold, unsigned int xp);
+    void printCaveReward(const Hero& hero, const Cave& cave);
 
 private:
 

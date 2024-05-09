@@ -8,7 +8,7 @@ Battle::Battle(Character& ch1, Character& ch2) : mCh1(ch1), mCh2(ch2)
 void Battle::start()
 {
 
-
+    mT.resetStyle();
     bool ch1Turn = true; //ch1 starts
     mT.printBattleBox(mCh1, mCh2, 20,1);
 

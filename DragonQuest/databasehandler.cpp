@@ -35,6 +35,7 @@ std::vector<Hero> DatabaseHandler::getHeroes()
         hero.setXP(mQ.value(3).toInt());
         hero.setHP(mQ.value(4).toInt());
         hero.setAP(mQ.value(5).toInt());
+        hero.setGold(mQ.value(6).toInt());
         hero.heal();
         heroes.push_back(hero);
     }
@@ -44,12 +45,13 @@ std::vector<Hero> DatabaseHandler::getHeroes()
 
 unsigned int DatabaseHandler::addHero(const Hero &hero)
 {
-    mQ.prepare("INSERT INTO hero (name, level, xp, hp, ap) VALUES (:name, :level, :xp, :hp, :ap)");
+    mQ.prepare("INSERT INTO hero (name, level, xp, hp, ap, gold) VALUES (:name, :level, :xp, :hp, :ap, :gold)");
     mQ.bindValue(":name", QString::fromStdString(hero.getName()));
     mQ.bindValue(":level", hero.getLevel());
     mQ.bindValue(":xp", hero.getXP());
     mQ.bindValue(":hp", hero.getHP());
     mQ.bindValue(":ap", hero.getAP());
+    mQ.bindValue(":gold", hero.getGold());
     mQ.exec();
 
     mQ.exec("SELECT MAX(hero_id) FROM hero");
@@ -59,12 +61,13 @@ unsigned int DatabaseHandler::addHero(const Hero &hero)
 
 void DatabaseHandler::saveHero(const Hero &hero)
 {
-    mQ.prepare("UPDATE hero SET level = :level, xp = :xp, hp = :hp, ap = :ap WHERE hero_id = :heroId");
+    mQ.prepare("UPDATE hero SET level = :level, xp = :xp, hp = :hp, ap = :ap, gold = :gold WHERE hero_id = :heroId");
     mQ.bindValue(":level", hero.getLevel());
     mQ.bindValue(":xp", hero.getXP());
     mQ.bindValue(":hp", hero.getHP());
     mQ.bindValue(":ap", hero.getAP());
     mQ.bindValue(":heroId", hero.getID());
+    mQ.bindValue(":gold", hero.getGold());
     mQ.exec();
 }
 
@@ -136,8 +139,8 @@ void DatabaseHandler::generateNewCaves(unsigned int heroLevel)
         level = heroLevel + (rand()%7 - 3); //random number between -3 and 3
         if(level < 1)
             level = 1;
-        gold = 100*level;
-        xp = 50*level;
+        gold = 10*level;
+        xp = 125*level;
 
         //Add cave to database
         mQ.prepare("INSERT INTO cave (name, gold, xp, level) VALUES (:name, :gold, :xp, :level)");

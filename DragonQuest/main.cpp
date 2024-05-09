@@ -201,18 +201,25 @@ int main()
                 t.resetStyle();
                 t.setTextColor().yellow(); t.print("Level: ", 5, 11);
                 t.setTextColor().white(); t.println(std::to_string(hero.getLevel()));
-                t.setTextColor().yellow(); t.print("XP: ", 5, 12);
+                t.setTextColor().yellow(); t.print("XP: ", 5, 12);              
                 t.setTextColor().white(); t.println(std::to_string(hero.getXP()));
                 t.setTextColor().red(); t.print("HP: ", 5, 13);
                 t.setTextColor().white(); t.println(std::to_string(hero.getHP()));
                 t.setTextColor().RGB(255, 230, 0); t.print("AP: ", 5, 14);
                 t.setTextColor().white(); t.println(std::to_string(hero.getAP()));
 
-                t.setTextColor().yellow(); t.print("Level up in: ", 5, 16);
+
+                t.resetStyle();
+                t.println("Resources:", 5, 17);
+
+                t.setTextColor().RGB(255, 220, 0); t.print("Gold: ", 5, 19);
+                t.setTextColor().white(); t.println(std::to_string(hero.getGold()));
+
+                t.setTextColor().yellow(); t.print("Level up in: ", 70, 34);
                 t.setTextColor().white(); t.println(std::to_string(1000*hero.getLevel() - hero.getXP())+" XP");
 
                 t.setFormat().blink();
-                t.print("Press Enter to Return ...", 5, 32);
+                t.print("Press Enter to Return ...", 5, 34);
                 t.hideCursor();
                 std::cin.ignore();
                 t.resetStyle();
@@ -307,7 +314,7 @@ int main()
                     currentState = GameState::MENU;
                 }
 
-                if(cavePicked > caves.size())
+                if(cavePicked > caves.size() || caves[cavePicked-1].isConquered())
                     cavePicked = 0;
 
                 if(cavePicked > 0)
@@ -330,14 +337,13 @@ int main()
                     battle.start();
                     if(hero.getHealth() == 0) //Hero lost
                     {
-                        currentState = GameState::CAVE_PICK;
+                        currentState = GameState::MENU;
                         break;
                     }
                     t.setFormat().blink();
                     t.print("Press Enter to continue ...", 5, 32);
                     std::cin.ignore();
-                    t.resetStyle();
-                    t.showCursor();
+                    t.resetStyle();                
                     t.clear();
                 }
 
@@ -347,18 +353,34 @@ int main()
                 {
                     caves[cavePicked-1].setConqueredStatus(true);
                     DH.saveCave(caves[cavePicked-1]);
-
-                    //t.printCaveReward();
+                    t.printCaveReward(hero, caves[cavePicked-1]);
+                    hero.giveGold(caves[cavePicked-1].getWinGold());
+                    hero.addXP(caves[cavePicked-1].getWinXP());
+                    t.print("", 0, 20);
+                    while(true)
+                    {
+                        if(hero.getXP() >= hero.getLevel()*1000) //level up
+                        {
+                            hero.levelUp();
+                            t.setTextColor().green();
+                            t.println("     " + hero.getName() + " has reached level " + std::to_string(hero.getLevel()) + "!");
+                            t.resetStyle();
+                        }
+                        else
+                        {
+                            break;
+                        }
+                    }
 
                     DH.saveHero(hero);
 
                     t.setFormat().blink();
                     t.print("Press Enter to continue ...", 5, 32);
                     std::cin.ignore();
-                    t.resetStyle();
-                    t.showCursor();
-                    currentState = GameState::CAVE_PICK;
+                    t.resetStyle();                 
+                    currentState = GameState::MENU;
                 }
+                t.showCursor();
 
             }
 
