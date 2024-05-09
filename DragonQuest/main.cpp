@@ -9,6 +9,7 @@
 #include "hero.h"
 #include "monster.h"
 #include "battle.h"
+#include "cave.h"
 
 int main()
 {
@@ -22,7 +23,7 @@ int main()
     // ************* Start Screen
     //t.printStartScreen();
     //std::cin.ignore();      //Wait for ENTER-press
-    t.clear();              //Clear Terminal
+    //t.clear();              //Clear Terminal
 
     // ************* Load Hero Screen
     std::vector<Hero> heroes = DH.getHeroes();
@@ -108,18 +109,22 @@ int main()
     }
 
     // ************* Game Running
-    std::vector<Monster> monsters;
+
     enum class GameState
     {
             MENU,
             HERO_INFO,
             MONSTER_PICK,
             MONSTER_BATTLE,
+            CAVE_PICK,
+            CAVE_BATTLE,
             GAME_OVER
     };
 
     GameState currentState = GameState::MENU;
-    unsigned int monsterPicked = 0;
+    std::vector<Monster> monsters;
+    std::vector<Cave> caves;
+    unsigned int monsterPicked = 0, cavePicked = 0;
 
     while(currentState != GameState::GAME_OVER)
     {
@@ -127,41 +132,61 @@ int main()
         {
             case GameState::MENU:
 
-                while(true)
+                //Print options
+                t.clear();
+                t.printPageTitle("Menu");
+                t.setFormat().underline();
+                t.println("Options", 5, 7);
+                t.resetStyle();
+                t.setTextColor().RGB(255, 200, 0);
+                t.println("[H] Hero Info", 5, 9);
+                t.setTextColor().RGB(255, 150, 0);
+                t.println("[B] Battle monster", 5, 10);
+                t.setTextColor().RGB(255, 100, 0);
+                t.println("[C] Enter cave", 5, 11);
+                t.setTextColor().RGB(255, 0, 0);
+                t.println("[X] Exit", 5, 12);
+                t.resetStyle();
+                t.print("Select option: ", 5, 14);
+                std::getline(std::cin, input);
+
+                if(input == "x" || input == "X")
                 {
-                    //Print options
-                    t.clear();
-                    t.printPageTitle("Menu");
-                    t.setFormat().underline();
-                    t.println("Options", 5, 7);
-                    t.resetStyle();
-                    t.setTextColor().RGB(255, 150, 0);
-                    t.println("[H] Hero Info", 5, 9);
-                    t.setTextColor().RGB(255, 100, 0);
-                    t.println("[B] Battle monster", 5, 10);
-                    t.setTextColor().RGB(255, 0, 0);
-                    t.println("[X] Exit", 5, 11);
-                    t.resetStyle();
-                    t.print("Select option: ", 5, 13);
-                    std::getline(std::cin, input);
-
-                    if(input == "x" || input == "X")
-                    {
-                        currentState = GameState::GAME_OVER;
-                        break;
-                    }
-                    else if (input == "h" || input == "H")
-                    {
-                        currentState = GameState::HERO_INFO;
-                        break;
-                    }
-                    else if (input == "b" || input == "B")
-                    {
-                        currentState = GameState::MONSTER_PICK;
-                        break;
-                    }
-
+                    currentState = GameState::GAME_OVER;
                 }
+                else if (input == "h" || input == "H")
+                {
+                    currentState = GameState::HERO_INFO;
+                }
+                else if (input == "b" || input == "B")
+                {
+                    monsters = DH.getMonsters(); //Load monsters
+                    currentState = GameState::MONSTER_PICK;
+                }
+                else if (input == "c" || input == "C")
+                {
+                    caves = DH.getCaves(); //Load caves
+                    currentState = GameState::CAVE_PICK;
+
+                    //Generate new caves if all 5 caves have been conquered
+                    bool allCavesConquered = true;
+                    for(int i = 0; i<caves.size(); ++i)
+                    {
+                        if(!caves[i].isConquered())
+                        {
+                           allCavesConquered = false;
+                           break;
+                        }
+                    }
+
+                    if(allCavesConquered)
+                    {
+                        t.print("Generating New Caves... ", 5, 30);
+                        DH.generateNewCaves(hero.getLevel());
+                        caves = DH.getCaves(); //Load new caves
+                    }
+                }
+
                 break;
 
             case GameState::HERO_INFO:
@@ -198,40 +223,36 @@ int main()
 
             case GameState::MONSTER_PICK:
 
-                while(currentState == GameState::MONSTER_PICK)
+                //Print info
+                t.clear();
+                t.printPageTitle("Pick A Battle");
+
+                t.setTextColor().RGB(255, 0, 0);
+                t.println("[X] Return to Menu", 5, 8);
+                t.resetStyle();
+
+                t.printMonsterNames(monsters, true, hero.getLevel(), true, 5, 10);
+                t.println("");
+                t.print("     Select option: ");
+                std::getline(std::cin, input);
+
+                try
                 {
-                    //Print info
-                        t.clear();
-                        t.printPageTitle("Pick A Battle");
-
-                        t.setTextColor().RGB(255, 0, 0);
-                        t.println("[X] Return to Menu", 5, 8);
-                        t.resetStyle();
-
-                        monsters = DH.getMonsters(); //Load monsters
-                        t.printMonsterNames(monsters, true, hero.getLevel(), true, 5, 10);
-                        t.println("");
-                        t.print("     Select option: ");
-                        std::getline(std::cin, input);
-
-                        try
-                        {
-                           monsterPicked = stoi(input);
-                        }
-                        catch(std::exception e)
-                        {
-                            monsterPicked = 0;
-
-                            if (input == "x" || input == "X")
-                            currentState = GameState::MENU;
-                        }
-
-                        if(monsterPicked > monsters.size())
-                            monsterPicked = 0;
-
-                        if(monsterPicked > 0)
-                            currentState = GameState::MONSTER_BATTLE;
+                   monsterPicked = stoi(input);
                 }
+                catch(std::exception e)
+                {
+                    monsterPicked = 0;
+
+                    if (input == "x" || input == "X")
+                    currentState = GameState::MENU;
+                }
+
+                if(monsterPicked > monsters.size())
+                    monsterPicked = 0;
+
+                if(monsterPicked > 0)
+                    currentState = GameState::MONSTER_BATTLE;
 
                 break;
 
@@ -257,9 +278,95 @@ int main()
                     }
 
                 break;
+
+            case GameState::CAVE_PICK:
+
+                //Print info
+                t.clear();
+                t.printPageTitle("ENTER A CAVE");
+
+                t.setTextColor().RGB(255, 0, 0);
+                t.println("[X] Return to Menu", 5, 8);
+                t.resetStyle();
+
+
+                t.printCaveNames(caves, hero.getLevel(), true, 5, 10);
+                t.println("");
+                t.print("     Select option: ");
+                std::getline(std::cin, input);
+
+                try
+                {
+                   cavePicked = stoi(input);
+                }
+                catch(std::exception e)
+                {
+                    cavePicked = 0;
+
+                    if (input == "x" || input == "X")
+                    currentState = GameState::MENU;
+                }
+
+                if(cavePicked > caves.size())
+                    cavePicked = 0;
+
+                if(cavePicked > 0)
+                {
+                    currentState = GameState::CAVE_BATTLE;
+                    monsters = DH.getCaveMonsters(caves[cavePicked-1]);
+                }
+
+            break;
+
+            case GameState::CAVE_BATTLE:
+            {
+                t.clear();
+                t.printCaveEntry(caves[cavePicked-1]);
+                t.clear();
+                t.hideCursor();
+                for(int i = 0; i<monsters.size(); ++i)
+                {
+                    Battle battle(hero, monsters[i]);
+                    battle.start();
+                    if(hero.getHealth() == 0) //Hero lost
+                    {
+                        currentState = GameState::CAVE_PICK;
+                        break;
+                    }
+                    t.setFormat().blink();
+                    t.print("Press Enter to continue ...", 5, 32);
+                    std::cin.ignore();
+                    t.resetStyle();
+                    t.showCursor();
+                    t.clear();
+                }
+
+                hero.heal();
+
+                if(currentState == GameState::CAVE_BATTLE) //Hero won - Mark cave conqured, show loot/rewards and save hero
+                {
+                    caves[cavePicked-1].setConqueredStatus(true);
+                    DH.saveCave(caves[cavePicked-1]);
+
+                    //t.printCaveReward();
+
+                    DH.saveHero(hero);
+
+                    t.setFormat().blink();
+                    t.print("Press Enter to continue ...", 5, 32);
+                    std::cin.ignore();
+                    t.resetStyle();
+                    t.showCursor();
+                    currentState = GameState::CAVE_PICK;
+                }
+
+            }
+
+            break;
+
             default:
-                //do nothing
-                break;
+                std::cout << "state error - terminate" << std::endl;
+                return 1;
         }
     }
 

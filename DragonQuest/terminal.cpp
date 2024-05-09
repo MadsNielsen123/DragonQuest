@@ -286,6 +286,53 @@ void Terminal::printMonsterNames(const std::vector<Monster> &monsters, bool with
     }
 }
 
+void Terminal::printCaveNames(const std::vector<Cave> &caves, unsigned int heroLevel, bool withIndex, unsigned int printX, unsigned int printY)
+{
+    for(int i = 0; i<caves.size(); ++i)
+    {
+        setCursor(printX, printY+i);
+        mTextColor.white(); mFormat.bold();
+        if(withIndex)
+        {
+            print(std::to_string(i+1) + ". ");
+        }
+
+        if(caves[i].isConquered())
+           mFormat.strikeThrough();
+
+        print(caves[i].getName());
+
+        resetStyle();
+        if(caves[i].isConquered())
+        {
+            print(" - CONQUERED ");
+        }
+        else if(caves[i].getLevel() < heroLevel)
+        {
+            mTextColor.RGB(50, 255, 0);
+            print(" - Easy");
+        }
+        else if (caves[i].getLevel() == heroLevel || caves[i].getLevel() == heroLevel+1)
+        {
+            mTextColor.RGB(255, 255, 0);
+            print(" - Intermediate");
+        }
+        else if (caves[i].getLevel() < heroLevel+3)
+        {
+            mTextColor.RGB(255, 150, 0);
+            print(" - HARD");
+        }
+        else
+        {
+            mTextColor.red();
+            print(" - Impossible");
+        }
+        resetStyle();
+        println("");
+
+    }
+}
+
 void Terminal::printBigText(const std::string &text, unsigned int x, unsigned int y)
 {
     for(int i=0; i<4; ++i)
@@ -353,6 +400,8 @@ void Terminal::printBigText(const std::string &text, unsigned int x, unsigned in
                 print(mBT.AA[i]);
             else if(text.at(c) == ' ')
                 print(mBT.SPACE[i]);
+            else if(text.at(c) == '.')
+                print(mBT.DOT[i]);
 
         }
     }
@@ -482,4 +531,51 @@ void Terminal::printBattleBox(const Character &ch1, const Character &ch2, unsign
 
 
     resetStyle();
+}
+
+void Terminal::printCaveEntry(const Cave &cave)
+{
+    hideCursor();
+
+    for(int i = 0; i<220; ++i)
+    {
+        mTextColor.RGB(i, i/2, 0);
+        printBigText("You Enter...", 20, 10);
+        usleep(5000);
+    }
+
+    usleep(2000000);
+
+    for(int i = 220; i>0; --i)
+    {
+        mTextColor.RGB(i, i/2, 0);
+        printBigText("You Enter...", 20, 10);
+        usleep(2000);
+    }
+
+    clear();
+    mTextColor.RGB(0, 0, 0);
+
+    for(int i = 0; i<250; ++i)
+    {
+        mTextColor.RGB(i, 0, 0);
+        printBigText(cave.getName(), 10, 10);
+        usleep(5000);
+    }
+
+    mTextColor.RGB(0, 0, 0);
+    usleep(3000000);
+
+    for(int i = 250; i>0; --i)
+    {
+        mTextColor.RGB(i, 0, 0);
+        printBigText(cave.getName(), 10, 10);
+        usleep(2000);
+    }
+    showCursor();
+}
+
+void Terminal::printCaveReward(const Hero &hero, unsigned int gold, unsigned int xp)
+{
+
 }

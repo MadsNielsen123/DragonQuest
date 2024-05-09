@@ -1,4 +1,5 @@
 #include "databasehandler.h"
+#include <random>
 
 DatabaseHandler::DatabaseHandler(const QString &username, const QString &password)
 {
@@ -73,6 +74,125 @@ std::vector<Monster> DatabaseHandler::getMonsters()
     Monster monster;
 
     mQ.exec("SELECT * FROM monster");
+    while(mQ.next())
+    {
+        monster.setID(mQ.value(0).toInt());
+        monster.setName(mQ.value(1).toString().toStdString());
+        monster.setLevel(mQ.value(2).toInt());
+        monster.setHP(mQ.value(3).toInt());
+        monster.setAP(mQ.value(4).toInt());
+        monster.setKillXP(mQ.value(5).toInt());
+        monster.heal();
+        monsters.push_back(monster);
+    }
+
+    return monsters;
+}
+
+std::vector<Cave> DatabaseHandler::getCaves()
+{
+    std::vector<Cave> caves;
+    Cave cave;
+
+    mQ.exec("SELECT * FROM cave ORDER BY cave_id DESC LIMIT 5"); //only load last 5 caves
+    while(mQ.next())
+    {
+        cave.setID(mQ.value(0).toInt());
+        cave.setName(mQ.value(1).toString().toStdString());
+        cave.setWinGold(mQ.value(2).toInt());
+        cave.setWinXP(mQ.value(3).toInt());
+        cave.setLevel(mQ.value(4).toInt());
+        cave.setConqueredStatus(mQ.value(5).toBool());
+        caves.push_back(cave);
+    }
+
+    return caves;
+}
+
+void DatabaseHandler::generateNewCaves(unsigned int heroLevel)
+{
+    std::string name = "";
+    unsigned int gold = 0, xp = 0;
+    int level = 1;
+    srand((unsigned int)time(NULL));
+    for(int i = 0; i<5; ++i)
+    {
+        //Generate a radnom name
+        mQ.exec("SELECT * FROM cave_first_name ORDER BY RAND() LIMIT 1");
+        if(mQ.next())
+        {
+           name = mQ.value(0).toString().toStdString();
+        }
+
+        //Weight first row (" Cave") higher
+        mQ.exec("SELECT * FROM cave_second_name ORDER BY IF(nr = (SELECT MIN(nr) FROM cave_second_name), RAND() * 0.09, RAND()) LIMIT 1;");
+        if(mQ.next())
+        {
+           name += mQ.value(1).toString().toStdString();
+        }
+
+
+        //Random gold, xp and level
+        level = heroLevel + (rand()%7 - 3); //random number between -3 and 3
+        if(level < 1)
+            level = 1;
+        gold = 100*level;
+        xp = 50*level;
+
+        //Add cave to database
+        mQ.prepare("INSERT INTO cave (name, gold, xp, level) VALUES (:name, :gold, :xp, :level)");
+        mQ.bindValue(":name", QString::fromStdString(name));
+        mQ.bindValue(":gold", gold);
+        mQ.bindValue(":xp", xp);
+        mQ.bindValue(":level", level);
+        mQ.exec();
+
+        //Add monsters to the cave:
+        unsigned int levelFilled = 0;
+        unsigned int monsterID = 0;
+        while(levelFilled < level) //keep filling monster into the cave until sum(monsters levels) adds up to the caves level
+        {
+            mQ.prepare("SELECT * FROM monster where level<=:maxLevel ORDER BY RAND() LIMIT 1 "); //select a random monster that doesnt surpass caves level
+            mQ.bindValue(":maxLevel", level-levelFilled);
+            mQ.exec();
+            if(mQ.next())
+            {
+                monsterID = mQ.value(0).toInt();
+                levelFilled += mQ.value(2).toInt(); //Add monster's level to cave
+                std::cout << std::to_string(level) + " :" + std::to_string(levelFilled) << std::endl;
+            }
+
+            //Add the monster to the db
+            mQ.prepare("INSERT INTO cave_monster (cave_id, monster_id) VALUES ((SELECT cave_id FROM cave ORDER BY cave_id DESC LIMIT 1), :monsterID)");
+            mQ.bindValue(":monsterID", monsterID);
+            mQ.exec();
+
+        }
+
+    }
+}
+
+void DatabaseHandler::saveCave(const Cave& cave)
+{
+    mQ.prepare("UPDATE cave SET name = :name, gold = :gold, xp = :xp, level = :level, conquered = :conquered WHERE cave_id = :caveID");
+    mQ.bindValue(":name", QString::fromStdString(cave.getName()));
+    mQ.bindValue(":gold", cave.getWinGold());
+    mQ.bindValue(":xp", cave.getWinXP());
+    mQ.bindValue(":level", cave.getLevel());
+    mQ.bindValue(":conquered", cave.isConquered());
+    mQ.bindValue(":caveID", cave.getID());
+    mQ.exec();
+}
+
+std::vector<Monster> DatabaseHandler::getCaveMonsters(const Cave& cave)
+{
+    std::vector<Monster> monsters;
+    Monster monster;
+
+    mQ.prepare("select monster.* from cave Join cave_monster ON cave.cave_id = cave_monster.cave_id Join monster ON cave_monster.monster_id = monster.monster_id where cave.cave_id = :caveID");
+    mQ.bindValue(":caveID", cave.getID());
+    mQ.exec();
+
     while(mQ.next())
     {
         monster.setID(mQ.value(0).toInt());
