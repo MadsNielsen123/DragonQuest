@@ -10,6 +10,7 @@
 #include <hero.h>
 #include <monster.h>
 #include <cave.h>
+#include <magic.h>
 
 class DatabaseHandler
 {
@@ -24,11 +25,16 @@ public:
     //monster
     std::vector<Monster> getMonsters();
     //cave
-    std::vector<Cave> getCaves();
+    std::vector<Cave> getCaves(const Hero& hero);
     void saveCave(const Cave& cave);
-    void generateNewCaves(unsigned int heroLevel);
+    void generateNewCaves(const Hero& hero);
     std::vector<Monster> getCaveMonsters(const Cave& cave);
 
+    //Magic
+    std::vector<Magic> getBuyableMagics(const Hero& hero);
+    void giveHeroMagic(const Hero& hero, unsigned int magicID);
+    std::vector<Magic> getHeroMagics(const Hero& hero);
+    double getDamageModifier(const Magic& magic, Monster& ch);
 
 private:
     QSqlDatabase mDB;

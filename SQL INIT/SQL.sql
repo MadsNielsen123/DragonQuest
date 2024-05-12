@@ -1,5 +1,3 @@
-create schema dragon_quest;
-use dragon_quest;
 
 CREATE TABLE cave (
   cave_id int NOT NULL AUTO_INCREMENT,
@@ -8,8 +6,6 @@ CREATE TABLE cave (
   xp int NOT NULL,
   level int NOT NULL,
   conquered bool DEFAULT '0',
-  hero_id int,
-  FOREIGN KEY (hero_id) REFERENCES hero(hero_id),
   PRIMARY KEY (cave_id)
 ); 
 
@@ -26,14 +22,13 @@ CREATE TABLE cave_second_name (
 );
 INSERT INTO cave_second_name VALUES (1,' Cave'),(2,' Sinkhole'),(3,' Stronghold'),(4,' Hole'),(5,' Underground'),(6,' Passage'),(7,' Valley'),(8,' Swamp'),(9,' Mist'),(10,'-Knightly Cave'),(11,'-Crawling Cave'),(12,'-Seeking Cave'),(13,'-Dripping Cave'),(14,'-Infested Cave');
 
-SELECT * from hero;
-
 CREATE TABLE cave_monster (
   cave_id int DEFAULT NULL,
   monster_id int DEFAULT NULL,
   FOREIGN KEY (cave_id) REFERENCES cave(cave_id),
   FOREIGN KEY (monster_id) REFERENCES monster(monster_id)
 );
+
 
 CREATE TABLE element (
   element_id int NOT NULL AUTO_INCREMENT,
@@ -74,19 +69,12 @@ CREATE TABLE hero (
   hero_id int NOT NULL AUTO_INCREMENT,
   name char(20) NOT NULL,
   level int NOT NULL,
-  xp int NOT NULL DEFAULT 0,
-  hp int NOT NULL DEFAULT 10,
-  ap int NOT NULL DEFAULT 2,
-  gold int DEFAULT 0,
-  mp int NOT NULL DEFAULT 0,
+  xp int NOT NULL,
+  hp int NOT NULL,
+  ap int NOT NULL,
+  mp int NOT NULL,
   PRIMARY KEY (hero_id)
 );
-
-INSERT INTO hero(name, level, xp, hp, ap, mp) VALUES 
-('Brian', 2, 0, 12, 3, 2),
-('Klaus', 8, 0, 24, 9, 14),
-('Gustav', 15, 0, 38, 16, 28)
-;
 
 CREATE TABLE hero_magic (
   hero_id int NOT NULL,
@@ -108,10 +96,6 @@ CREATE TABLE magic (
   FOREIGN KEY (upgradeOf) REFERENCES magic (magic_id)
 );
 INSERT INTO magic VALUES (1,'Fire Flick',1,0,100,2,NULL),(2,'Fire Burst',5,0,500,2,1),(3,'Fire Blast',10,0,1000,2,2),(4,'Water Pulse',1,0,100,4,NULL),(5,'Water Stream',5,0,500,4,4),(6,'Water Jet',10,0,1000,4,5),(7,'Rock Throw',1,0,100,3,NULL),(8,'Rock Smash',5,0,500,3,7),(9,'Rock Slam',10,0,1000,3,8),(10,'Leaf Cutter',2,0,200,6,NULL),(11,'Branch Cutter',8,0,800,6,10),(12,'Trunk Cutter',12,0,1200,6,11),(13,'Iron Fist',3,0,300,7,NULL),(14,'Iron Strike',10,0,1500,7,13),(15,'Metal Stab',1,0,100,7,NULL),(16,'Metal Slash',5,0,500,7,15),(17,'Metal Razor',10,0,1000,7,16),(18,'LifeSteal 1',1,-2,200,5,NULL),(19,'LifeSteal 2',4,-6,800,5,18),(20,'LifeSteal 3',8,-10,1400,5,19),(21,'LifeSteal 4',12,-12,2000,5,20),(22,'Dragon Claw',6,1,500,9,NULL),(23,'Dragon Bite',12,2,1200,9,22),(24,'Dragon Razor',16,3,2000,9,23),(25,'Sacrifice 1',8,2,500,5,NULL),(26,'Sacrifice 2',16,5,1200,5,25),(27,'Sacrifice 3',24,8,2000,5,26),(28,'Heal 1',0,-4,200,8,NULL),(29,'Heal 2',0,-10,800,8,28),(30,'Heal 3',0,-20,1500,8,29),(31,'Star Wish',1,-1,100,8,NULL),(32,'Star Sky',3,-3,500,8,31),(33,'Star Rain',8,-8,1200,8,32);
-
-select * from magic;
-
-SELECT m.* FROM magic AS m LEFT JOIN hero_magic AS hm1 ON m.magic_id = hm1.magic_id AND hm1.hero_id = 2 LEFT JOIN magic AS m2 ON m.upgradeOf = m2.magic_id LEFT JOIN hero_magic AS hm2 ON m2.magic_id = hm2.magic_id AND hm2.hero_id = 2 WHERE hm1.hero_id IS NULL AND (m.upgradeOf IS NULL OR hm2.hero_id = 2);
 
 CREATE TABLE monster (
   monster_id int NOT NULL AUTO_INCREMENT,

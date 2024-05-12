@@ -427,7 +427,7 @@ void Terminal::printBattleBox(const Character &ch1, const Character &ch2, unsign
     //BOX
     setCursor(x+1, y);
     std::cout << std::setw(80) << std::setfill('_') << "" << std::flush;
-    for(int i = 1; i<9; ++i)
+    for(int i = 1; i<10; ++i)
     {
         setCursor(x, y+i); std::cout << "|" << std::flush;
         if(i>1)
@@ -436,7 +436,7 @@ void Terminal::printBattleBox(const Character &ch1, const Character &ch2, unsign
         }
         setCursor(x+81, y+i); std::cout << "|" << std::flush;
     }
-    setCursor(x+1, y+8);
+    setCursor(x+1, y+9);
     std::cout << std::setw(80) << std::setfill('_') << "" << std::flush;
 
     //Characters Names
@@ -455,14 +455,24 @@ void Terminal::printBattleBox(const Character &ch1, const Character &ch2, unsign
     print("Level " + std::to_string(ch2.getLevel()));
     resetStyle();
 
+    //Monster Type
+    print("Type:", x+3+41, 5);
+    for(int i = 0; i<ch2.getElementCount(); ++i)
+    {
+        mTextColor.RGB(ch2.getElementR(i), ch2.getElementG(i), ch2.getElementB(i));
+        print(" " + ch2.getElementName(i));
+    }
+
+
+
     //Stats
-    resetStyle();    setCursor(x+3, 5);
+    resetStyle();    setCursor(x+3, 7);
     print(std::to_string(ch1.getAP()));
     mTextColor.yellow();
     print(" AP");
 
     resetStyle();
-    setCursor(x+3+41, 5);
+    setCursor(x+3+41, 7);
     print(std::to_string(ch2.getAP()));
     mTextColor.yellow();
     print(" AP");
@@ -470,7 +480,7 @@ void Terminal::printBattleBox(const Character &ch1, const Character &ch2, unsign
 
     unsigned int g, r;
     //Character1 HP-Bar
-    setCursor(x+3, 7);
+    setCursor(x+3, 8);
     print(std::to_string(ch1.getHealth()) + "/" + std::to_string(ch1.getHP()));
     mTextColor.red();
     print(" HP");
@@ -487,7 +497,7 @@ void Terminal::printBattleBox(const Character &ch1, const Character &ch2, unsign
         g = 255/50*(100./ch1.getHP()*ch1.getHealth());
     }
 
-    setCursor(x+3, 8);
+    setCursor(x+3, 9);
     print("|");
     mTextColor.RGB(r, g, 0);
     for(int i = 0; i<30; ++i)
@@ -501,7 +511,7 @@ void Terminal::printBattleBox(const Character &ch1, const Character &ch2, unsign
     print("|");
 
     //Character2 HP-Bar
-    setCursor(x+3+41, 7);
+    setCursor(x+3+41, 8);
     print(std::to_string(ch2.getHealth()) + "/" + std::to_string(ch2.getHP()));
     mTextColor.red();
     print(" HP");
@@ -518,7 +528,7 @@ void Terminal::printBattleBox(const Character &ch1, const Character &ch2, unsign
         g = 255/50*(100./ch2.getHP()*ch2.getHealth());
     }
 
-    setCursor(x+3+41, 8);
+    setCursor(x+3+41, 9);
     print("|");
     mTextColor.RGB(r, g, 0);
     for(int i = 0; i<30; ++i)
@@ -605,4 +615,132 @@ void Terminal::printCaveReward(const Hero &hero, const Cave& cave)
     mTextColor.yellow();
     print(" Bonus XP");
     resetStyle();
+}
+
+void Terminal::printShop(const Hero &hero, std::vector<Magic> buyAbleMagics)
+{
+    //Print Hero cash
+    mTextColor.RGB(255, 220, 0);
+    printBigText("GOLD", 80, 9);
+    resetStyle();
+    mTextColor.RGB(255, 100, 0);
+    print("   _....._", 78, 15);
+    print("  ';-.--';'", 78, 16);
+    print("    }===={       _.---.._", 78, 17);
+    print("  .'      '.    ';-..--';", 78, 18);
+    print(" /::        \\    `}===={", 78, 19);
+    print("|::   $      :   '      '.", 78, 20);
+    print("\\::.        _.---_        \\", 78, 21);
+    print(" '::_     _`---..-';  $    |", 78, 22);
+    print("     `````  }====={        /", 78, 23);
+    print("          .'       '.   _.'", 78, 24);
+    print("         /::         \\ `", 78, 25);
+    print("        |::    $      |", 78, 26);
+    print("        \\::.          /", 78, 27);
+    print("         '::_      _.'", 78, 28);
+    print("             ``````", 78, 29);
+    print("-----------", 94, 14);
+    print("-----------", 94, 16);
+    mTextColor.RGB(255, 220, 0);
+    print(std::to_string(hero.getGold()), 95, 15);
+    resetStyle();
+
+
+    //Print List
+    unsigned int longestName = 0;
+
+    for(Magic magic: buyAbleMagics)
+    {
+        if(longestName < magic.getName().length())
+            longestName = magic.getName().length();
+    }
+
+    for(int i = 0; i<buyAbleMagics.size(); ++i)
+    {
+        print(std::to_string(i+1)+".", 5, 10+i);
+        mTextColor.RGB(buyAbleMagics[i].getR(), buyAbleMagics[i].getG(), buyAbleMagics[i].getB());
+        print(buyAbleMagics[i].getName(), 10, 10+i);
+        resetStyle();
+        print("[", 13+longestName, 10+i);
+        mTextColor.RGB(buyAbleMagics[i].getR(), buyAbleMagics[i].getG(), buyAbleMagics[i].getB());
+        print(buyAbleMagics[i].getElementName());
+        resetStyle();
+        print("]");
+        print(std::to_string(buyAbleMagics[i].getBuyPrice()), 13+longestName+10, 10+i);
+        mTextColor.RGB(255, 220, 0);
+        print(" GOLD");
+        if(buyAbleMagics[i].getRequiredID() > 0)
+        {
+            mTextColor.RGB(255, 50, 0);
+            print("|UPGRADE|", 13+longestName+10+12, 10+i);
+        }
+        resetStyle();
+    }
+}
+
+void Terminal::printEquipedMagics(const Hero &hero, std::vector<Magic> magics)
+{
+    //BOXES
+    print("___________________ Not Equipped __________________", 6, 10);
+    for(int i = 0; i<25; i++)
+    {
+        print("|", 5, 11+i);
+        print("|", 57, 11+i);
+    }
+    print("___________________________________________________", 6, 35);
+
+    print("____________________ Equipped _____________________", 60, 10);
+    for(int i = 0; i<25; i++)
+    {
+        print("|", 59, 11+i);
+        print("|", 111, 11+i);
+    }
+    print("___________________________________________________", 60, 35);
+
+    //Print magics
+    unsigned int eqCount = 0, ueqCount = 0;
+    for(int i = 0; i<magics.size(); ++i)
+    {
+
+        if(!hero.magicIsEquiped(magics[i].getID()))
+        {
+            eqCount++;
+            if(eqCount < 24) //print left
+            {
+                print(std::to_string(magics[i].getID())+". ", 7 ,11+eqCount);
+                mTextColor.RGB(magics[i].getR(), magics[i].getG(), magics[i].getB());
+                print(magics[i].getName());
+                print(" - " +std::to_string(magics[i].getDamage()) + " DMG");
+            }
+            else //print right
+            {
+                print(std::to_string(magics[i].getID())+". ", 35 ,11+eqCount-23);
+                mTextColor.RGB(magics[i].getR(), magics[i].getG(), magics[i].getB());
+                print(magics[i].getName());
+                print(" - " +std::to_string(magics[i].getDamage()) + " DMG");
+            }
+
+        }
+        else
+        {
+            ueqCount++;
+            if(ueqCount < 24) //print left
+            {
+                print(std::to_string(magics[i].getID())+". ", 61 , 11+ueqCount);
+                mTextColor.RGB(magics[i].getR(), magics[i].getG(), magics[i].getB());
+                print(magics[i].getName());
+                print(" - " +std::to_string(magics[i].getDamage()) + " DMG");
+            }
+            else //print right
+            {
+                print(std::to_string(magics[i].getID())+". ", 88 , 11+ueqCount-23);
+                mTextColor.RGB(magics[i].getR(), magics[i].getG(), magics[i].getB());
+                print(magics[i].getName());
+                print(" - " + std::to_string(magics[i].getDamage()) + " DMG");
+            }
+        }
+
+        resetStyle();
+    }
+
 }

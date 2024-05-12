@@ -28,6 +28,7 @@ add_executable(DragonQuest
   databasehandler.h databasehandler.cpp
   bigtext.h bigtext.cpp
   cave.h cave.cpp
+  magic.h magic.cpp
 )
 target_link_libraries(DragonQuest PRIVATE Qt${QT_VERSION_MAJOR}::Core Qt5::Core Qt5::Quick Qt5::Sql)
 

@@ -9,6 +9,7 @@
 #include "monster.h"
 #include "cave.h"
 #include "bigtext.h"
+#include "magic.h"
 
 class Terminal
 {
@@ -43,6 +44,9 @@ public:
     void printBattleBox(const Character& ch1, const Character& ch2, unsigned int x, unsigned int y);
     void printCaveEntry(const Cave& cave);
     void printCaveReward(const Hero& hero, const Cave& cave);
+    void printShop(const Hero& hero, std::vector<Magic> buyAbleMagics);
+    void printEquipedMagics(const Hero& hero, std::vector<Magic> magics);
+
 
 private:
 

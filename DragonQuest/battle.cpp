@@ -1,108 +1,134 @@
 #include "battle.h"
+#include <random>
 
-Battle::Battle(Character& ch1, Character& ch2) : mCh1(ch1), mCh2(ch2)
+Battle::Battle(Hero& hero, Monster& monster, DatabaseHandler& dh) : mHero(hero), mMonster(monster), mDH(dh)
 {
     mT.setTerminalSize(120,40);
 }
 
 void Battle::start()
 {
+    srand((unsigned int)time(NULL));
+    bool herosTurn = true; //ch1 starts
+    bool magicTime = true;
+    int dmg = 0;
+    double modifier = 0;
+    Magic currentMagic;
 
     mT.resetStyle();
-    bool ch1Turn = true; //ch1 starts
-    mT.printBattleBox(mCh1, mCh2, 20,1);
+    mT.printBattleBox(mHero, mMonster, 20,1);
 
     mBattleLog.push_back("Battle Ready to begin");
-    mT.printList(mBattleLog, false, 5, 15, 12, false, mBattleLog.size()-1);
+    mT.printList(mBattleLog, false, 5, 15, 13, false, mBattleLog.size()-1);
     usleep(200000);
     mBattleLog.push_back("1..");
-    mT.printList(mBattleLog, false, 5, 15, 12, false, mBattleLog.size()-1);
-    usleep(800000);
+    mT.printList(mBattleLog, false, 5, 15, 13, false, mBattleLog.size()-1);
+    usleep(600000);
     mBattleLog.push_back("2..");
-    mT.printList(mBattleLog, false, 5, 15, 12, false, mBattleLog.size()-1);
-    usleep(800000);
+    mT.printList(mBattleLog, false, 5, 15, 13, false, mBattleLog.size()-1);
+    usleep(600000);
     mBattleLog.push_back("3..");
-    mT.printList(mBattleLog, false, 5, 15, 12, false, mBattleLog.size()-1);
-    usleep(800000);
+    mT.printList(mBattleLog, false, 5, 15, 13, false, mBattleLog.size()-1);
+    usleep(600000);
     mBattleLog.push_back("FIGHT!");
-    mT.printList(mBattleLog, false, 5, 15, 12, false, mBattleLog.size()-1);
+    mT.printList(mBattleLog, false, 5, 15, 13, false, mBattleLog.size()-1);
     usleep(200000);
 
 
     //Battle ON
-    while(mCh1.getHealth() > 0 && mCh2.getHealth() > 0)
+    while(mHero.getHealth() > 0 && mMonster.getHealth() > 0)
     {
 
-        if(ch1Turn)
+        if(herosTurn)
         {
-            mBattleLog.push_back(mCh1.getName() + " attacks!");
-            mBattleLog.push_back(mCh2.getName() + " takes " + std::to_string(mCh1.getAP()) + " DMG!");
+            if(magicTime && mHero.hasMagicEquipped()) //Use spell
+            {
+                currentMagic = mHero.getMagic(rand() % mHero.magicsEquippedCount());
+                modifier = mDH.getDamageModifier(currentMagic, mMonster);
+                dmg = (mHero.getMP()+currentMagic.getDamage()) * modifier;
+                mBattleLog.push_back(mHero.getName() + " uses " + currentMagic.getName());
+                if(modifier > 1)
+                    mBattleLog.push_back("It's efficient! " + mMonster.getName() + " takes " + std::to_string(dmg) + " DMG!");
+                else if(modifier < 1 && modifier > 0.3)
+                    mBattleLog.push_back("It's not very efficient... " +mMonster.getName() + " takes " + std::to_string(dmg) + " DMG!");
+                else if(modifier < 1)
+                    mBattleLog.push_back("Its sucks! " +mMonster.getName() + " only takes " + std::to_string(dmg) + " DMG!");
+                else
+                    mBattleLog.push_back(mMonster.getName() + " takes " + std::to_string(dmg) + " DMG!");
 
-            if(mCh1.getAP() > mCh2.getHealth())
-                mCh2.setHealth(0);
+            }
             else
-                mCh2.setHealth(mCh2.getHealth()-mCh1.getAP());
+            {
+                dmg = mHero.getAP();
+
+                mBattleLog.push_back(mHero.getName() + " attacks!");
+                mBattleLog.push_back(mMonster.getName() + " takes " + std::to_string(dmg) + " DMG!");
+
+            }
+
+            if(dmg > mMonster.getHealth())
+                mMonster.setHealth(0);
+            else
+                mMonster.setHealth(mMonster.getHealth()-dmg);
+            magicTime = !magicTime;
         }
         else
         {
-            mBattleLog.push_back(mCh2.getName() + " attacks!");
-            mBattleLog.push_back(mCh1.getName() + " takes " + std::to_string(mCh2.getAP()) + " DMG!");
+            dmg = mMonster.getAP();
 
-            if(mCh2.getAP() > mCh1.getHealth())
-                mCh1.setHealth(0);
+            mBattleLog.push_back(mMonster.getName() + " attacks!");
+            mBattleLog.push_back(mHero.getName() + " takes " + std::to_string(dmg) + " DMG!");
+
+            if(dmg > mHero.getHealth())
+                mHero.setHealth(0);
             else
-                mCh1.setHealth(mCh1.getHealth()-mCh2.getAP());
+                mHero.setHealth(mHero.getHealth()-dmg);
         }
 
 
         mT.clear();
-        mT.printBattleBox(mCh1, mCh2, 20,1);
-        mT.printList(mBattleLog, false, 5, 15, 12, false, mBattleLog.size()-1);
+        mT.printBattleBox(mHero, mMonster, 20,1);
+        mT.printList(mBattleLog, false, 5, 15, 13, false, mBattleLog.size()-1);
         usleep(800000); //Wait a bit before next attack
-        ch1Turn = !ch1Turn;
+        herosTurn = !herosTurn;
     }   
 
     //Battle DONE
 
     mT.setTextColor().red();
     mT.setFormat().bold();
-    if(mCh1.getHealth() == 0)
-        mT.println("     " + mCh1.getName() + " has been slain");
+    if(mHero.getHealth() == 0)
+        mT.println("     " + mHero.getName() + " has been slain");
     else
-        mT.println("     " + mCh2.getName() + " has been slain");
+        mT.println("     " + mMonster.getName() + " has been slain");
 
     mT.resetStyle();
 
 
 
 
-    //If win: HERO VS MONSTER -> gain XP
-    if(mCh2.getHealth() == 0)
+    //If win: gain XP
+    if(mMonster.getHealth() == 0)
     {
-        Hero* hero = dynamic_cast<Hero*>(&mCh1);
-        Monster* monster = dynamic_cast<Monster*>(&mCh2);
 
-        if(hero && monster)
+        mT.println("");
+        mT.print("     " + mHero.getName() + " receives ");
+        mT.setTextColor().yellow(); mT.print(std::to_string(mMonster.getKillXP()) + "XP ");
+        mT.resetStyle(); mT.println("for winning");
+        mHero.addXP(mMonster.getKillXP());
+
+        while(true)
         {
-            mT.println("");
-            mT.print("     " + mCh1.getName() + " receives ");
-            mT.setTextColor().yellow(); mT.print(std::to_string(monster->getKillXP()) + "XP ");
-            mT.resetStyle(); mT.println("for winning");
-            hero->addXP(monster->getKillXP());
-
-            while(true)
+            if(mHero.getXP() >= mHero.getLevel()*1000) //level up
             {
-                if(hero->getXP() >= hero->getLevel()*1000) //level up
-                {
-                    hero->levelUp();
-                    mT.setTextColor().green();
-                    mT.println("     " + hero->getName() + " has reached level " + std::to_string(hero->getLevel()) + "!");
-                    mT.resetStyle();
-                }
-                else
-                {
-                    break;
-                }
+                mHero.levelUp();
+                mT.setTextColor().green();
+                mT.println("     " + mHero.getName() + " has reached level " + std::to_string(mHero.getLevel()) + "!");
+                mT.resetStyle();
+            }
+            else
+            {
+                break;
             }
         }
     }
