@@ -258,7 +258,7 @@ std::vector<Magic> DatabaseHandler::getBuyableMagics(const Hero &hero)
     {
         magic.setID(mQ.value(0).toInt());
         magic.setName(mQ.value(1).toString().toStdString());
-        magic.setDamage(mQ.value(2).toInt());
+        magic.setDamage(mQ.value(2).toDouble());
         magic.setSelfDamage(mQ.value(3).toInt());
         magic.setPrice(mQ.value(4).toInt());
         magic.setElement(mQ.value(5).toInt());
@@ -302,7 +302,7 @@ std::vector<Magic> DatabaseHandler::getHeroMagics(const Hero& hero)
     {
         magic.setID(mQ.value(0).toInt());
         magic.setName(mQ.value(1).toString().toStdString());
-        magic.setDamage(mQ.value(2).toInt());
+        magic.setDamage(mQ.value(2).toDouble());
         magic.setSelfDamage(mQ.value(3).toInt());
         magic.setPrice(mQ.value(4).toInt());
         magic.setElement(mQ.value(5).toInt());

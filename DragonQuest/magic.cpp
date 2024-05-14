@@ -5,7 +5,7 @@ Magic::Magic()
 
 }
 
-int Magic::getDamage() const {return mDamage;}
+double Magic::getDamage() const {return mDamage;}
 int Magic::getSelfDamage() const {return mSelfDamage;}
 unsigned int Magic::getID() const  {return mID;}
 unsigned int Magic::getRequiredID() const {return mRequiredID;}
@@ -17,7 +17,7 @@ unsigned int Magic::getR() const {return mR;}
 unsigned int Magic::getG() const {return mG;}
 unsigned int Magic::getB() const {return mB;}
 
-void Magic::setDamage(int damage) {mDamage = damage;}
+void Magic::setDamage(double damage) {mDamage = damage;}
 void Magic::setSelfDamage(int selfDamage) {mSelfDamage = selfDamage;}
 void Magic::setID(unsigned int id) {mID = id;}
 void Magic::setRequiredID(unsigned int id) {mRequiredID = id;}

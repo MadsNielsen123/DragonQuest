@@ -45,16 +45,45 @@ void Battle::start()
             {
                 currentMagic = mHero.getMagic(rand() % mHero.magicsEquippedCount());
                 modifier = mDH.getDamageModifier(currentMagic, mMonster);
-                dmg = (mHero.getMP()+currentMagic.getDamage()) * modifier;
-                mBattleLog.push_back(mHero.getName() + " uses " + currentMagic.getName());
-                if(modifier > 1)
-                    mBattleLog.push_back("It's efficient! " + mMonster.getName() + " takes " + std::to_string(dmg) + " DMG!");
-                else if(modifier < 1 && modifier > 0.3)
-                    mBattleLog.push_back("It's not very efficient... " +mMonster.getName() + " takes " + std::to_string(dmg) + " DMG!");
-                else if(modifier < 1)
-                    mBattleLog.push_back("Its sucks! " +mMonster.getName() + " only takes " + std::to_string(dmg) + " DMG!");
+                dmg = (mHero.getMP()*currentMagic.getDamage()) * modifier;
+
+
+                if(currentMagic.getSelfDamage() > 0) //Take self Damage
+                {
+                    mBattleLog.push_back(mHero.getName() + " take " + std::to_string(currentMagic.getSelfDamage()) +" DMG using " + currentMagic.getName());
+
+                    if(currentMagic.getSelfDamage() > mHero.getHealth())
+                        mHero.setHealth(0);
+                    else
+                        mHero.setHealth(mHero.getHealth()-currentMagic.getSelfDamage());
+                }
+                else if(currentMagic.getSelfDamage() < 0) //Heal
+                {
+                    mBattleLog.push_back(mHero.getName() + " heals " + std::to_string(currentMagic.getSelfDamage()*(-1)) +" health using " + currentMagic.getName());
+
+                    if(mHero.getHealth() - currentMagic.getSelfDamage() > mHero.getHP())
+                        mHero.heal();
+                    else
+                        mHero.setHealth(mHero.getHealth()-currentMagic.getSelfDamage());
+                }
                 else
-                    mBattleLog.push_back(mMonster.getName() + " takes " + std::to_string(dmg) + " DMG!");
+                {
+                    mBattleLog.push_back(mHero.getName() + " uses " + currentMagic.getName());
+                }
+
+                if(dmg > 0)
+                {
+                    if(modifier > 1)
+                        mBattleLog.push_back("It's efficient! " + mMonster.getName() + " takes " + std::to_string(dmg) + " DMG!");
+                    else if(modifier < 1 && modifier > 0.3)
+                        mBattleLog.push_back("It's not very efficient... " +mMonster.getName() + " takes " + std::to_string(dmg) + " DMG!");
+                    else if(modifier < 1)
+                        mBattleLog.push_back("Its sucks! " +mMonster.getName() + " only takes " + std::to_string(dmg) + " DMG!");
+                    else
+                        mBattleLog.push_back(mMonster.getName() + " takes " + std::to_string(dmg) + " DMG!");
+                }
+
+
 
             }
             else
@@ -89,7 +118,7 @@ void Battle::start()
         mT.clear();
         mT.printBattleBox(mHero, mMonster, 20,1);
         mT.printList(mBattleLog, false, 5, 15, 13, false, mBattleLog.size()-1);
-        usleep(800000); //Wait a bit before next attack
+        usleep(2000000); //Wait a bit before next attack
         herosTurn = !herosTurn;
     }   
 

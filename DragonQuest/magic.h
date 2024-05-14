@@ -8,7 +8,7 @@ public:
     Magic();
 
     //getters/setters
-    int getDamage() const;
+    double getDamage() const;
     int getSelfDamage() const;
     unsigned int getID() const;
     unsigned int getRequiredID() const;
@@ -20,7 +20,7 @@ public:
     unsigned int getG() const;
     unsigned int getB() const;
 
-    void setDamage(int damage);
+    void setDamage(double damage);
     void setSelfDamage(int selfDamage);
     void setID(unsigned int id);
     void setRequiredID(unsigned int id);
@@ -34,7 +34,8 @@ public:
 
 private:
 
-    int mDamage = 0, mSelfDamage = 0;
+    double mDamage = 0;
+    int mSelfDamage = 0;
     unsigned int mID = 0, mRequiredID = 0, mBuyPrice = 0;
     std::string mName;
     unsigned int mElement;

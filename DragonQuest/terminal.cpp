@@ -710,14 +710,16 @@ void Terminal::printEquipedMagics(const Hero &hero, std::vector<Magic> magics)
                 print(std::to_string(magics[i].getID())+". ", 7 ,11+eqCount);
                 mTextColor.RGB(magics[i].getR(), magics[i].getG(), magics[i].getB());
                 print(magics[i].getName());
-                print(" - " +std::to_string(magics[i].getDamage()) + " DMG");
+                if(magics[i].getDamage() > 0)
+                    print(" (" + std::to_string(magics[i].getDamage()).substr(0, std::to_string(magics[i].getDamage()).find(".") + 1 + 1) + "*MP)");
             }
             else //print right
             {
                 print(std::to_string(magics[i].getID())+". ", 35 ,11+eqCount-23);
                 mTextColor.RGB(magics[i].getR(), magics[i].getG(), magics[i].getB());
                 print(magics[i].getName());
-                print(" - " +std::to_string(magics[i].getDamage()) + " DMG");
+                if(magics[i].getDamage() > 0)
+                    print(" (" + std::to_string(magics[i].getDamage()).substr(0, std::to_string(magics[i].getDamage()).find(".") + 1 + 1) + "*MP)");
             }
 
         }
@@ -729,14 +731,16 @@ void Terminal::printEquipedMagics(const Hero &hero, std::vector<Magic> magics)
                 print(std::to_string(magics[i].getID())+". ", 61 , 11+ueqCount);
                 mTextColor.RGB(magics[i].getR(), magics[i].getG(), magics[i].getB());
                 print(magics[i].getName());
-                print(" - " +std::to_string(magics[i].getDamage()) + " DMG");
+                if(magics[i].getDamage() > 0)
+                    print(" (" + std::to_string(magics[i].getDamage()).substr(0, std::to_string(magics[i].getDamage()).find(".") + 1 + 1) + "*MP)");
             }
             else //print right
             {
                 print(std::to_string(magics[i].getID())+". ", 88 , 11+ueqCount-23);
                 mTextColor.RGB(magics[i].getR(), magics[i].getG(), magics[i].getB());
                 print(magics[i].getName());
-                print(" - " + std::to_string(magics[i].getDamage()) + " DMG");
+                if(magics[i].getDamage() > 0)
+                    print(" (" + std::to_string(magics[i].getDamage()).substr(0, std::to_string(magics[i].getDamage()).find(".") + 1 + 1) + "*MP)");
             }
         }
 

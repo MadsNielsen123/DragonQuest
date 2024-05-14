@@ -41,7 +41,7 @@ void Hero::unequipMagic(const Magic& magic)
     {
         if(magic.getID() == mEquippedMagics[i].getID())
         {
-            mEquippedMagics.back() = mEquippedMagics[i];
+            mEquippedMagics[i] = mEquippedMagics.back();
             mEquippedMagics.pop_back();
         }
     }
