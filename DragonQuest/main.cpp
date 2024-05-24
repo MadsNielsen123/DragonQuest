@@ -22,9 +22,9 @@ int main()
 
 
     // ************* Start Screen
-    //t.printStartScreen();
-    //std::cin.ignore();      //Wait for ENTER-press
-    //t.clear();              //Clear Terminal
+    t.printStartScreen();
+    std::cin.ignore();      //Wait for ENTER-press
+    t.clear();              //Clear Terminal
 
     // ************* Load Hero Screen
     std::vector<Hero> heroes = DH.getHeroes();
