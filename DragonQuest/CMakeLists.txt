@@ -31,10 +31,3 @@ add_executable(DragonQuest
   magic.h magic.cpp
 )
 target_link_libraries(DragonQuest PRIVATE Qt${QT_VERSION_MAJOR}::Core Qt5::Core Qt5::Quick Qt5::Sql)
-
-# Create an imported target for ncurses
-add_library(Curses::Curses INTERFACE IMPORTED)
-set_target_properties(Curses::Curses PROPERTIES
-  INTERFACE_INCLUDE_DIRECTORIES "${CURSES_INCLUDE_DIRS}"
-  INTERFACE_LINK_LIBRARIES "${CURSES_LIBRARIES}"
-)
