@@ -1,9 +1,25 @@
-TEST A SPIL
+Dragon Quest
+- A mini console game - Hit the grind. Software Development - Exam project
 
-1. Brug LINUX. Brug stadart terminal, eller en anden der understøtter ANSI-koder.
+ - Run GAME -
 
-2. Sørg for at sætte databasen op korrekt: Brug DB_Init filen. Skift brugernavn og adgangskode i toppen af main() - beskrevet i rapporten.
+1. USE LINUX. Terminal that supports ANSI-codes.
 
-3. Kør exe-koden fra build-mappen. Virker den ikke så kompiler projektet igen ud fra cmakelisten.
+2. Database setup: Use DB_Init file. Change username and password in the main() code.
+
+3. Run exe-code from build-directory or compile using the cmakelist.
  
-4. Sørg for at have de rigtige biblioteker installeret som QTSQL, QTDEV osv.
+4. Be sure to have all the nessesary libary downloaded like  QTSQL, QTDEV osv.
+
+   sudo apt install vim
+   sudo apt  install cmake
+   sudo apt-get install build-essential
+   sudo apt install libqt5sql5-mysql 
+   sudo apt install libqt5sql5
+   sudo apt install libqt5
+   sudo apt-get install qt5-default
+   sudo apt-get install qt5-qmake
+   sudo apt-get install qtbase5-dev
+   sudo apt-get install qtdeclarative5-dev
+   sudo apt install mysql-server
+   sudo systemctl start mysql.service
